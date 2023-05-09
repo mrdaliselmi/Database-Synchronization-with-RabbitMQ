@@ -149,6 +149,9 @@ class ProductManagementApp:
             product_sale.total_sales = float(self.total_sales_entry.get())
             statements.append('total_sales = {0}, '.format(product_sale.total_sales))
         query += ', '.join(statements)
+        # remove the last comma if it exists
+        if (query[-2:] == ', '):
+            query = query[:-2]
         query += ' WHERE product_id = {0} AND region = "{1}";'.format(product_sale.product_id, "EAST")
         self.session.commit()
         with open(self.filepath, 'a') as f:

@@ -3,6 +3,17 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import text
 import pika
+import mysql.connector
+
+host_args = {
+    "host": "localhost",
+    "user": "root",
+    "password": "password"
+}
+
+con = mysql.connector.connect(**host_args)
+cur = con.cursor(dictionary=True)
+
 
 connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
 engine = create_engine('mysql+pymysql://root:password@localhost/headoffice')
@@ -14,13 +25,19 @@ class synchronization:
         self.filepath = filepath
 
     def synchronize(self):
-        with engine.connect() as con:
-            with open(self.filepath) as file:
-                query = text(file.read())
-                print(query)
-                # con.execute(query)
-            with open(self.filepath, 'w') as file:
-                file.write('')
+        with open(self.filepath, 'r') as sql_file:
+            result_iterator = cur.execute(sql_file.read(), multi=True)
+            for res in result_iterator:
+                print("Running query: ", res)
+                print(f"Affected {res.rowcount} rows" )
+        con.commit()
+        # with engine.connect() as con:
+        #     with open(self.filepath) as file:
+        #         query = text(file.read())
+        #         print(query)
+        #         con.execute(query)
+        with open(self.filepath, 'w') as file:
+            file.write('')
 
     def receive_messages(self):
         
@@ -38,10 +55,11 @@ class synchronization:
                 # Write the SQL statement to the file
                 # message = json.loads(body)
                 message = body.decode('utf-8')
+                message = "USE headoffice;\n"+message
                 f.write(message + '\n')
             self.synchronize()
         
-        channel.basic_consume(queue='headoffice', on_message_callback=callback)
+        channel.basic_consume(queue='headoffice', on_message_callback=callback, auto_ack=True)
         
         print(' [*] Waiting for messages. To exit press CTRL+C')
         # Start consuming messages

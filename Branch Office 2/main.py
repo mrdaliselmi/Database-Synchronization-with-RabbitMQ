@@ -6,10 +6,10 @@ from models.db import ProductSale
 import pika
 from constants.branchCredentials import Credentials
 # Connect to RabbitMQ server
-connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
+connection = pika.BlockingConnection(pika.ConnectionParameters(host = 'localhost'))
 
 engine = create_engine('mysql+pymysql://root:password@localhost/branchoffice2')
-Session = sessionmaker(bind=engine)
+Session = sessionmaker(bind=engine) 
 
 class ProductManagementApp:
     def on_closing(self):
@@ -149,6 +149,9 @@ class ProductManagementApp:
             product_sale.total_sales = float(self.total_sales_entry.get())
             statements.append('total_sales = {0}, '.format(product_sale.total_sales))
         query += ', '.join(statements)
+        # remove the last comma if it exists
+        if (query[-2:] == ', '):
+            query = query[:-2]
         query += ' WHERE product_id = {0} AND region = "{1}";'.format(product_sale.product_id, "WEST")
         self.session.commit()
         with open(self.filepath, 'a') as f:
@@ -207,9 +210,9 @@ class ProductManagementApp:
                 try:
                     channel.basic_publish(exchange='headoffice',
                                         routing_key='headoffice',
-                                        body=message,
-                                        properties=pika.BasicProperties(content_type='text/plain',
-                                                            delivery_mode=pika.DeliveryMode.Transient))
+                                        body=message)
+                                        # properties=pika.BasicProperties(content_type='text/plain',
+                                        #                     delivery_mode=pika.DeliveryMode.Transient))
                     with open(self.filepath, 'w') as f:
                         f.write('')
                 except pika.exceptions.UnroutableError :
