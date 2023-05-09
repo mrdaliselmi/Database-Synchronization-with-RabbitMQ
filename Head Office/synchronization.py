@@ -42,6 +42,7 @@ class synchronization:
             self.synchronize()
         
         channel.basic_consume(queue='headoffice', on_message_callback=callback)
+        
         print(' [*] Waiting for messages. To exit press CTRL+C')
         # Start consuming messages
         channel.start_consuming()

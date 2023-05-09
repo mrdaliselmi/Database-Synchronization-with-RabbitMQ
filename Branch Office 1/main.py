@@ -207,9 +207,9 @@ class ProductManagementApp:
                 try:
                     channel.basic_publish(exchange='headoffice',
                                         routing_key='headoffice',
-                                        body=message,
-                                        properties=pika.BasicProperties(content_type='text/plain',
-                                                            delivery_mode=pika.DeliveryMode.Transient))
+                                        body=message)
+                                        # properties=pika.BasicProperties(content_type='text/plain',
+                                        #                     delivery_mode=pika.DeliveryMode.Transient))
                     with open(self.filepath, 'w') as f:
                         f.write('')
                 except pika.exceptions.UnroutableError :
