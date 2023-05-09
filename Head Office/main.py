@@ -14,33 +14,10 @@ def fetch_data():
     session.close()
     return product_sales
 
-# def display_data(product_sales):
-#     window = tk.Tk()
-    
-#     tk.Label(window, text='Product ID').grid(row=0, column=0)
-#     tk.Label(window, text='Date').grid(row=0, column=1)
-#     tk.Label(window, text='Region').grid(row=0, column=2)
-#     tk.Label(window, text='Product Name').grid(row=0, column=3)
-#     tk.Label(window, text='Quantity').grid(row=0, column=4)
-#     tk.Label(window, text='Cost').grid(row=0, column=5)
-#     tk.Label(window, text='Tax').grid(row=0, column=6)
-#     tk.Label(window, text='Total Sales').grid(row=0, column=7)
-    
-#     for i, sale in enumerate(product_sales):
-#         tk.Label(window, text=sale.product_id).grid(row=i+1, column=0)
-#         tk.Label(window, text=sale.date).grid(row=i+1, column=1)
-#         tk.Label(window, text=sale.region).grid(row=i+1, column=2)
-#         tk.Label(window, text=sale.product_name).grid(row=i+1, column=3)
-#         tk.Label(window, text=sale.quantity).grid(row=i+1, column=4)
-#         tk.Label(window, text=sale.cost).grid(row=i+1, column=5)
-#         tk.Label(window, text=sale.tax).grid(row=i+1, column=6)
-#         tk.Label(window, text=sale.total_sales).grid(row=i+1, column=7)
-#     window.mainloop()
-
 def display_data(product_sales):
     # Create a new Tkinter window
     window = tk.Tk()
-
+    window.title('Head Office Database')
     def refresh_data():
         # Refetch data from the database
         product_sales = fetch_data()
